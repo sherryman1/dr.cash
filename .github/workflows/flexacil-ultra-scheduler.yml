@@ -1,0 +1,46 @@
+name: Scheduled flexacil_ultra/flexacil Rotation
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # 1:00 am Nigeria
+    - cron: '0 4 * * *'   # 5:00 am Nigeria
+    - cron: '0 7 * * *'   # 8:00 am Nigeria
+    - cron: '0 10 * * *'  # 11:00 am Nigeria
+    - cron: '0 13 * * *'  # 2:00 pm Nigeria
+    - cron: '0 16 * * *'  # 5:00 pm Nigeria
+    - cron: '0 19 * * *'  # 8:00 pm Nigeria
+    - cron: '0 21 * * *'  # 10:00 pm Nigeria
+
+jobs:
+  rotate_flexacil_ultra_flexacil:
+    name: Rotate Flexacil Ultra Campaign
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Run rotated flexacil_ultra/flexacil script
+        run: |
+          HOUR=$(date -u +"%H")
+          ROTATION=$((HOUR % 3))
+
+          if [ "$ROTATION" -eq 0 ]; then
+            echo "🟢 Running flexacil_ultra/flexacil1.py"
+            python flexacil_ultra/flexacil1.py
+          elif [ "$ROTATION" -eq 1 ]; then
+            echo "🟡 Running flexacil_ultra/flexacil2.py"
+            python flexacil_ultra/flexacil2.py
+          else
+            echo "🔵 Running flexacil_ultra/flexacil3.py"
+            python flexacil_ultra/flexacil3.py
+          fi
